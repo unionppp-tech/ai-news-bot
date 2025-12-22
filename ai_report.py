@@ -64,3 +64,30 @@ with open(file_path, "w", encoding="utf-8") as f:
     f.write(content)
 
 print(f"Saved Korean AI news report with summary to {file_path}")
+
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+EMAIL_USER = os.environ.get("EMAIL_USER")
+EMAIL_PASS = os.environ.get("EMAIL_PASS")
+EMAIL_TO = os.environ.get("EMAIL_TO")
+
+def send_email(subject, body):
+    msg = MIMEMultipart()
+    msg["From"] = EMAIL_USER
+    msg["To"] = EMAIL_TO
+    msg["Subject"] = subject
+
+    msg.attach(MIMEText(body, "plain", "utf-8"))
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(EMAIL_USER, EMAIL_PASS)
+        server.send_message(msg)
+
+# 이메일 발송
+email_subject = f"[AI 데일리 뉴스] {date_str}"
+send_email(email_subject, content)
+
+print("Email sent successfully")
+
