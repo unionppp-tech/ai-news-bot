@@ -91,3 +91,33 @@ send_email(email_subject, content)
 
 print("Email sent successfully")
 
+import requests
+import json
+
+DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
+
+def send_to_discord(message: str):
+    if not DISCORD_WEBHOOK_URL:
+        print("No DISCORD_WEBHOOK_URL set")
+        return
+
+    payload = {
+        "content": message[:1900]  # 디스코드 메시지 길이 제한
+    }
+
+    r = requests.post(
+        DISCORD_WEBHOOK_URL,
+        data=json.dumps(payload),
+        headers={"Content-Type": "application/json"},
+        timeout=10
+    )
+
+    if r.status_code == 204:
+        print("Discord message sent")
+    else:
+        print(f"Discord send failed: {r.status_code}, {r.text}")
+
+# 🔔 디스코드로 뉴스 전송
+send_to_discord(content)
+
+
