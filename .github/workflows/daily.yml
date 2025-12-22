@@ -1,4 +1,7 @@
 name: AI Daily News Bot
+permissions:
+  contents: write
+
 
 on:
   schedule:
