@@ -19,18 +19,22 @@ file_path = f"{OUTPUT_DIR}/ai_news_kr_{date_str}.md"
 def summarize(text):
     url = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
     payload = {"inputs": text}
-    try:
-        r = requests.post(url, json=payload, timeout=15)
-        result = r.json()
-        if isinstance(result, list):
-            return result[0].get("summary_text", "")
-        return "요약 실패"
-    except Exception:
-        return "요약 실패"
 
-lines = []
-lines.append(f"# 🇰🇷 AI 데일리 뉴스 ({date_str})\n")
-lines.append(f"_생성 시각: {time_str}_\n")
+    try:
+        r = requests.post(url, json=payload, timeout=10)
+
+        # 상태 코드 체크
+        if r.status_code != 200:
+            return "요약 생략 (API 제한)"
+
+        result = r.json()
+        if isinstance(result, list) and "summary_text" in result[0]:
+            return result[0]["summary_text"]
+
+        return "요약 생략 (응답 오류)"
+
+    except Exception:
+        return "요약 생략 (연결 실패)"
 
 # 3. 상위 5개 뉴스 + 요약
 for i, entry in enumerate(feed.entries[:5], start=1):
