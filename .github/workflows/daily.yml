@@ -29,8 +29,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install feedparser requests
 
-      - name: Run AI news script
-        run: python ai_report.py
+- name: Run AI news script
+  env:
+    EMAIL_USER: ${{ secrets.EMAIL_USER }}
+    EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+    EMAIL_TO: ${{ secrets.EMAIL_TO }}
+  run: python ai_report.py
 
       - name: Commit and push report
         run: |
